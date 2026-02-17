@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { getApiUrl } from "@/lib/api";
 import {
     BarChart,
     Bar,
@@ -34,7 +35,7 @@ const DashboardSection = () => {
     const fetchStats = () => {
         setRetrying(true);
         setError(null);
-        fetch("http://localhost:3000/api/dashboard")
+        fetch(getApiUrl("/api/dashboard"))
             .then((res) => {
                 if (!res.ok) throw new Error(`Server error: ${res.status}`);
                 return res.json();

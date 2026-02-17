@@ -3,6 +3,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Lock, User } from "lucide-react";
+import { getApiUrl } from "@/lib/api";
 
 const Login = () => {
     const [username, setUsername] = useState("");
@@ -15,7 +16,8 @@ const Login = () => {
         try {
             let res;
             try {
-                res = await fetch("http://localhost:3000/api/login", {
+                // ...
+                res = await fetch(getApiUrl("/api/login"), {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ username, password }),

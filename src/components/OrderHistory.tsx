@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import { getApiUrl } from "@/lib/api";
 import { Clock, User, MapPin, ShoppingBag, RefreshCcw, Printer, X } from "lucide-react";
 import {
     Dialog,
@@ -25,7 +26,7 @@ const OrderHistory = () => {
 
         const today = new Date().toISOString().split('T')[0];
         try {
-            const res = await fetch(`http://localhost:3000/api/orders/history?date=${today}&t=${Date.now()}`);
+            const res = await fetch(getApiUrl(`/api/orders/history?date=${today}&t=${Date.now()}`));
             const data = await res.json();
             setOrders(Array.isArray(data) ? data : []);
         } catch (err) {
@@ -41,7 +42,7 @@ const OrderHistory = () => {
     const fetchArchiveSummary = useCallback(async () => {
         setLoading(true);
         try {
-            const res = await fetch(`http://localhost:3000/api/orders/archive-summary?t=${Date.now()}`);
+            const res = await fetch(getApiUrl(`/api/orders/archive-summary?t=${Date.now()}`));
             const data = await res.json();
             setArchiveData(Array.isArray(data) ? data : []);
         } catch (err) {
@@ -56,7 +57,7 @@ const OrderHistory = () => {
         setLoading(true);
         setSelectedArchiveDate(date);
         try {
-            const res = await fetch(`http://localhost:3000/api/orders/history?date=${date}&t=${Date.now()}`);
+            const res = await fetch(getApiUrl(`/api/orders/history?date=${date}&t=${Date.now()}`));
             const data = await res.json();
             setOrders(Array.isArray(data) ? data : []);
         } catch (err) {

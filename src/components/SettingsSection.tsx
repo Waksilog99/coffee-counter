@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { getApiUrl } from "@/lib/api";
 import { UserPlus, Clock, Key, Trash2, User, CheckCircle2, AlertCircle, LogIn, LogOut, History, DollarSign, ChevronRight, Coffee } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
@@ -115,7 +116,7 @@ const SettingsSection = () => {
         if (!confirm(`Are you sure you want to release salary for ${employeeName}? This will mark all pending records as PAID.`)) return;
 
         try {
-            const res = await fetch(`http://localhost:3000/api/payroll/pay/${employeeId}`, {
+            const res = await fetch(getApiUrl(`/api/payroll/pay/${employeeId}`), {
                 method: "POST",
                 headers: { Authorization: `Bearer ${token}` }
             });
@@ -147,7 +148,7 @@ const SettingsSection = () => {
 
     const fetchEmployees = async () => {
         try {
-            const res = await fetch("http://localhost:3000/api/employees", {
+            const res = await fetch(getApiUrl("/api/employees"), {
                 headers: { Authorization: `Bearer ${token}` }
             });
             const data = await res.json();
@@ -160,7 +161,7 @@ const SettingsSection = () => {
     const fetchAttendance = async () => {
         const endpoint = user?.role === "admin" ? "/api/attendance/all" : "/api/attendance/me";
         try {
-            const res = await fetch(`http://localhost:3000${endpoint}`, {
+            const res = await fetch(getApiUrl(endpoint), {
                 headers: { Authorization: `Bearer ${token}` }
             });
             const data = await res.json();
@@ -173,7 +174,7 @@ const SettingsSection = () => {
     const fetchPayroll = async () => {
         const endpoint = user?.role === "admin" ? "/api/payroll/all" : "/api/payroll/me";
         try {
-            const res = await fetch(`http://localhost:3000${endpoint}`, {
+            const res = await fetch(getApiUrl(endpoint), {
                 headers: { Authorization: `Bearer ${token}` }
             });
             const data = await res.json();
@@ -244,7 +245,7 @@ const SettingsSection = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            const res = await fetch("http://localhost:3000/api/employees", {
+            const res = await fetch(getApiUrl("/api/employees"), {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -273,7 +274,7 @@ const SettingsSection = () => {
         e.preventDefault();
         if (!resetId) return;
         try {
-            const res = await fetch("http://localhost:3000/api/employees/reset-password", {
+            const res = await fetch(getApiUrl("/api/employees/reset-password"), {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -295,7 +296,7 @@ const SettingsSection = () => {
 
     const handleTimeIn = async () => {
         try {
-            const res = await fetch("http://localhost:3000/api/attendance/in", {
+            const res = await fetch(getApiUrl("/api/attendance/in"), {
                 method: "POST",
                 headers: { Authorization: `Bearer ${token}` }
             });
@@ -313,7 +314,7 @@ const SettingsSection = () => {
 
     const handleTimeOut = async () => {
         try {
-            const res = await fetch("http://localhost:3000/api/attendance/out", {
+            const res = await fetch(getApiUrl("/api/attendance/out"), {
                 method: "POST",
                 headers: { Authorization: `Bearer ${token}` }
             });
@@ -336,7 +337,7 @@ const SettingsSection = () => {
         reader.onloadend = async () => {
             const base64 = reader.result as string;
             try {
-                const res = await fetch("http://localhost:3000/api/user/profile-picture", {
+                const res = await fetch(getApiUrl("/api/user/profile-picture"), {
                     method: "POST",
                     headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
                     body: JSON.stringify({ profile_picture: base64 })
@@ -358,7 +359,7 @@ const SettingsSection = () => {
         e.preventDefault();
         if (newPass !== confirmPass) return toast.error("Passwords do not match");
         try {
-            const res = await fetch("http://localhost:3000/api/user/change-password", {
+            const res = await fetch(getApiUrl("/api/user/change-password"), {
                 method: "POST",
                 headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
                 body: JSON.stringify({ currentPassword: currentPass, newPassword: newPass })

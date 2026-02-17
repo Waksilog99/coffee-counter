@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { getApiUrl } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import {
@@ -26,7 +27,7 @@ const AdminDashboard = () => {
             return;
         }
 
-        fetch("http://localhost:3000/api/dashboard")
+        fetch(getApiUrl("/api/dashboard"))
             .then((res) => res.json())
             .then((data) => setStats(data))
             .catch((err) => console.error(err));

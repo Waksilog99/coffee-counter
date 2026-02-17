@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from "react";
 import MenuGrid from "@/components/MenuGrid";
 import OrderPanel, { type OrderItem } from "@/components/OrderPanel";
 import DashboardSection from "@/components/DashboardSection";
+import { getApiUrl } from "@/lib/api";
 import OrderHistory from "@/components/OrderHistory";
 import MenuDisplay from "@/components/MenuDisplay";
 import SettingsSection from "@/components/SettingsSection";
@@ -30,7 +31,7 @@ const Index = () => {
 
   const fetchNextId = useCallback(async () => {
     try {
-      const res = await fetch("http://localhost:3000/api/orders/next-id");
+      const res = await fetch(getApiUrl("/api/orders/next-id"));
       const data = await res.json();
       setCurrentTicketId(data.nextId);
     } catch (err) {
@@ -45,7 +46,7 @@ const Index = () => {
 
   const fetchTodayOrders = useCallback(async () => {
     try {
-      const res = await fetch("http://localhost:3000/api/dashboard");
+      const res = await fetch(getApiUrl("/api/dashboard"));
       const data = await res.json();
       setTodayOrders(data.dailyOrders);
     } catch (err) {

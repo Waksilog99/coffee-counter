@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { getApiUrl } from "@/lib/api";
 
 export type Category = {
     id: number;
@@ -12,7 +13,7 @@ export const useCategories = () => {
     const { data: categories = [], isLoading, error } = useQuery({
         queryKey: ["categories"],
         queryFn: async () => {
-            const res = await fetch("http://localhost:3000/api/categories");
+            const res = await fetch(getApiUrl("/api/categories"));
             if (!res.ok) throw new Error("Failed to fetch categories");
             return res.json() as Promise<Category[]>;
         },
@@ -20,7 +21,7 @@ export const useCategories = () => {
 
     const addCategory = useMutation({
         mutationFn: async (name: string) => {
-            const res = await fetch("http://localhost:3000/api/categories", {
+            const res = await fetch(getApiUrl("/api/categories"), {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -45,7 +46,7 @@ export const useCategories = () => {
 
     const deleteCategory = useMutation({
         mutationFn: async (id: number) => {
-            const res = await fetch(`http://localhost:3000/api/categories/${id}`, {
+            const res = await fetch(getApiUrl(`/api/categories/${id}`), {
                 method: "DELETE",
                 headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
             });

@@ -1,4 +1,5 @@
 import { Minus, Plus, X, CreditCard, Wallet, Banknote, Coffee, Heart, GripVertical } from "lucide-react";
+import { getApiUrl } from "@/lib/api";
 import type { MenuItem } from "@/data/menu";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
@@ -73,7 +74,7 @@ const OrderPanel = ({ items, onUpdateQty, onRemove, onClear, currentTicketId, on
     try {
       let res;
       try {
-        res = await fetch("http://localhost:3000/api/orders", {
+        res = await fetch(getApiUrl("/api/orders"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
