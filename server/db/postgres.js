@@ -10,7 +10,13 @@ const pool = new Pool({
 });
 
 // Helper to run queries
+let initPromise = null;
+
 const query = async (text, params) => {
+    if (!initPromise) {
+        initPromise = initDb();
+    }
+    await initPromise;
     return await pool.query(text, params);
 };
 
@@ -18,7 +24,7 @@ const query = async (text, params) => {
 const initDb = async () => {
     try {
         // Users Table
-        await query(`CREATE TABLE IF NOT EXISTS users (
+        await pool.query(`CREATE TABLE IF NOT EXISTS users (
             id SERIAL PRIMARY KEY,
             username TEXT UNIQUE,
             password TEXT,
@@ -28,7 +34,7 @@ const initDb = async () => {
         )`);
 
         // Attendance Table
-        await query(`CREATE TABLE IF NOT EXISTS attendance (
+        await pool.query(`CREATE TABLE IF NOT EXISTS attendance (
             id SERIAL PRIMARY KEY,
             user_id INTEGER REFERENCES users(id),
             time_in TEXT,
@@ -38,7 +44,7 @@ const initDb = async () => {
         )`);
 
         // Orders Table
-        await query(`CREATE TABLE IF NOT EXISTS orders (
+        await pool.query(`CREATE TABLE IF NOT EXISTS orders (
             id TEXT PRIMARY KEY,
             customer_name TEXT,
             table_no TEXT,
@@ -51,7 +57,7 @@ const initDb = async () => {
         )`);
 
         // Order Items Table
-        await query(`CREATE TABLE IF NOT EXISTS order_items (
+        await pool.query(`CREATE TABLE IF NOT EXISTS order_items (
             id SERIAL PRIMARY KEY,
             order_id TEXT REFERENCES orders(id),
             product_name TEXT,
@@ -60,7 +66,7 @@ const initDb = async () => {
         )`);
 
         // Products Table
-        await query(`CREATE TABLE IF NOT EXISTS products (
+        await pool.query(`CREATE TABLE IF NOT EXISTS products (
             id SERIAL PRIMARY KEY,
             name TEXT,
             price NUMERIC,
@@ -70,19 +76,19 @@ const initDb = async () => {
         )`);
 
         // Categories Table
-        await query(`CREATE TABLE IF NOT EXISTS categories (
+        await pool.query(`CREATE TABLE IF NOT EXISTS categories (
             id SERIAL PRIMARY KEY,
             name TEXT UNIQUE
         )`);
 
         // Seed Admin
         const adminUser = 'admin';
-        const res = await query("SELECT * FROM users WHERE username = $1", [adminUser]);
+        const res = await pool.query("SELECT * FROM users WHERE username = $1", [adminUser]);
         if (res.rows.length === 0) {
             const adminPass = 'admin123';
             const salt = bcrypt.genSaltSync(10);
             const hash = bcrypt.hashSync(adminPass, salt);
-            await query("INSERT INTO users (username, password, role, name) VALUES ($1, $2, $3, $4)", [adminUser, hash, 'admin', 'System Admin']);
+            await pool.query("INSERT INTO users (username, password, role, name) VALUES ($1, $2, $3, $4)", [adminUser, hash, 'admin', 'System Admin']);
             console.log("Admin user created.");
         }
 
@@ -93,9 +99,7 @@ const initDb = async () => {
 };
 
 // Auto-init on load if DB_URL is present (or we can call it explicitly)
-if (process.env.DATABASE_URL) {
-    initDb();
-}
+// Auto-init removed in favor of lazy init in query()
 
 export default {
     // Users

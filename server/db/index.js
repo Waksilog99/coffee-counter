@@ -4,7 +4,7 @@ import sqliteAdapter from './sqlite.js';
 import firestoreAdapter from './firestore.js';
 import postgresAdapter from './postgres.js';
 
-const DB_TYPE = process.env.DB_TYPE || 'sqlite';
+const DB_TYPE = process.env.DB_TYPE || (process.env.DATABASE_URL ? 'postgres' : 'sqlite');
 
 console.log(`Using Database Adapter: ${DB_TYPE}`);
 
