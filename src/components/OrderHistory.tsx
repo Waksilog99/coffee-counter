@@ -229,7 +229,7 @@ const OrderHistory = () => {
                                                                 </div>
                                                             </div>
                                                             <div className="text-right">
-                                                                <p className="text-lg font-black text-primary">₱{(order.total || 0).toFixed(2)}</p>
+                                                                <p className="text-lg font-black text-primary">₱{Number(order.total || 0).toFixed(2)}</p>
                                                                 <p className="text-[10px] text-muted-foreground flex items-center justify-end gap-1.5 mt-1 font-medium">
                                                                     <Clock className="w-3 h-3" />
                                                                     {formatDate(order.date)}

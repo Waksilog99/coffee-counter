@@ -65,7 +65,7 @@ const AdminDashboard = () => {
                         Daily Sales
                     </h3>
                     <p className="text-4xl font-display font-bold text-primary mt-2">
-                        ₱{stats.dailySales.toFixed(2)}
+                        ₱{Number(stats.dailySales).toFixed(2)}
                     </p>
                 </div>
                 <div className="bg-card p-6 rounded-3xl border border-border shadow-sm">
@@ -73,7 +73,7 @@ const AdminDashboard = () => {
                         Monthly Sales
                     </h3>
                     <p className="text-4xl font-display font-bold text-foreground mt-2">
-                        ₱{stats.monthlySales.toFixed(2)}
+                        ₱{Number(stats.monthlySales).toFixed(2)}
                     </p>
                 </div>
             </div>

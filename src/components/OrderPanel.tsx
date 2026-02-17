@@ -205,7 +205,7 @@ const OrderPanel = ({ items, onUpdateQty, onRemove, onClear, currentTicketId, on
                   </div>
                   <div className="min-w-0">
                     <h4 className="font-black text-foreground text-[11px] truncate uppercase tracking-tight">{item.name}</h4>
-                    <p className="text-[10px] font-bold text-muted-foreground">₱{item.price.toFixed(0)} x {item.quantity}</p>
+                    <p className="text-[10px] font-bold text-muted-foreground">₱{Number(item.price).toFixed(0)} x {item.quantity}</p>
                   </div>
                 </div>
 
