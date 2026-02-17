@@ -31,7 +31,7 @@ export const ReceiptView = ({ order }: { order: Order }) => {
         });
     };
 
-    const subtotal = (order.items || []).reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const subtotal = (order.items || []).reduce((sum, item) => sum + (Number(item.price) * Number(item.quantity)), 0);
     const tax = subtotal * 0.1;
 
     return (
@@ -73,7 +73,7 @@ export const ReceiptView = ({ order }: { order: Order }) => {
                             {item.quantity}x {item.name.toUpperCase()}
                         </span>
                         <span className="whitespace-nowrap">
-                            ₱{(item.price * item.quantity).toFixed(2)}
+                            ₱{(Number(item.price) * Number(item.quantity)).toFixed(2)}
                         </span>
                     </div>
                 ))}
@@ -82,15 +82,15 @@ export const ReceiptView = ({ order }: { order: Order }) => {
             <div className="border-t border-dashed border-border print:border-black pt-4 space-y-1">
                 <div className="flex justify-between">
                     <span>NET AMOUNT</span>
-                    <span>₱{(order.total / 1.12).toFixed(2)}</span>
+                    <span>₱{Number(order.total / 1.12).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
                     <span>VAT (12%)</span>
-                    <span>₱{(order.total - (order.total / 1.12)).toFixed(2)}</span>
+                    <span>₱{(Number(order.total) - (Number(order.total) / 1.12)).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between font-bold text-sm pt-2">
                     <span>TOTAL</span>
-                    <span>₱{(order.total || 0).toFixed(2)}</span>
+                    <span>₱{Number(order.total || 0).toFixed(2)}</span>
                 </div>
             </div>
 
