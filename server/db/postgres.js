@@ -13,10 +13,7 @@ const pool = new Pool({
 let initPromise = null;
 
 const query = async (text, params) => {
-    if (!initPromise) {
-        initPromise = initDb();
-    }
-    await initPromise;
+    // Lazy init removed for performance. Tables are expected to exist.
     return await pool.query(text, params);
 };
 
@@ -267,29 +264,31 @@ export default {
         },
 
         getStats: async (today, month) => {
-            // Postgres aggregation
-            const salesRes = await query(`
-             SELECT 
-               (SELECT SUM(total) FROM orders WHERE date LIKE $1) as daily_sales,
-               (SELECT SUM(total) FROM orders WHERE date LIKE $2) as monthly_sales,
-               (SELECT COUNT(*) FROM orders WHERE date LIKE $3) as daily_orders
-             `, [`${today}%`, `${month}%`, `${today}%`]);
+            // Postgres aggregation - Parallel execution
+            const [salesRes, topProductsRes, trendRes] = await Promise.all([
+                query(`
+                    SELECT 
+                    (SELECT SUM(total) FROM orders WHERE date LIKE $1) as daily_sales,
+                    (SELECT SUM(total) FROM orders WHERE date LIKE $2) as monthly_sales,
+                    (SELECT COUNT(*) FROM orders WHERE date LIKE $3) as daily_orders
+                `, [`${today}%`, `${month}%`, `${today}%`]),
 
-            const topProductsRes = await query(`
-             SELECT product_name, SUM(quantity) as total_qty 
-             FROM order_items 
-             GROUP BY product_name 
-             ORDER BY total_qty DESC 
-             LIMIT 5
-             `);
+                query(`
+                    SELECT product_name, SUM(quantity) as total_qty 
+                    FROM order_items 
+                    GROUP BY product_name 
+                    ORDER BY total_qty DESC 
+                    LIMIT 5
+                `),
 
-            const trendRes = await query(`
-             SELECT substring(date, 1, 10) as day, SUM(total) as amount
-             FROM orders
-             GROUP BY day
-             ORDER BY day DESC
-             LIMIT 7
-             `);
+                query(`
+                    SELECT substring(date, 1, 10) as day, SUM(total) as amount
+                    FROM orders
+                    GROUP BY day
+                    ORDER BY day DESC
+                    LIMIT 7
+                `)
+            ]);
 
             return {
                 sales: salesRes.rows[0],
