@@ -1,12 +1,34 @@
+import 'dotenv/config'; // Load env vars first
 import express from 'express';
 import cors from 'cors';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 import db from './db.js';
 
 const app = express();
-const PORT = 3000;
-const SECRET_KEY = 'supersecretkey'; // In prod, use env var
+const PORT = process.env.PORT || 3000;
+const SECRET_KEY = process.env.SECRET_KEY || 'fallback_secret_key'; // Use env var
+
+// Security Headers
+app.use(helmet());
+
+// Rate Limiting (Global)
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // Limit each IP to 100 requests per windowMs
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+app.use(limiter);
+
+// Login Rate Limiter (Stricter)
+const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 5, // Limit each IP to 5 login requests per windowMs
+    message: { error: "Too many login attempts, please try again later." }
+});
 
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
@@ -17,7 +39,7 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.get('/api/ping', (req, res) => res.send('pong'));
 
 // Login Endpoint
-app.post('/api/login', (req, res) => {
+app.post('/api/login', loginLimiter, (req, res) => {
     const { username, password } = req.body;
 
     db.get("SELECT * FROM users WHERE username = ?", [username], (err, user) => {
