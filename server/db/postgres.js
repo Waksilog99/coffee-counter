@@ -102,6 +102,9 @@ const initDb = async () => {
 // Auto-init removed in favor of lazy init in query()
 
 export default {
+    init: async () => {
+        await initDb();
+    },
     // Users
     users: {
         findByUsername: async (username) => {

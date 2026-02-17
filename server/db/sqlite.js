@@ -117,6 +117,10 @@ const all = (sql, params = []) => {
 
 
 export default {
+    init: async () => {
+        // SQLite inits automatically on load, but we keep this for interface consistency
+        return Promise.resolve();
+    },
     // Expose raw methods for complex queries if needed, but prefer higher-level abstractions
     run,
     get,
