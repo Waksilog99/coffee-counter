@@ -14,6 +14,12 @@ const SECRET_KEY = process.env.SECRET_KEY || 'fallback_secret_key'; // Use env v
 // Security Headers
 app.use(helmet());
 
+// Request Logging
+app.use((req, res, next) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+    next();
+});
+
 // Rate Limiting (Global)
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes

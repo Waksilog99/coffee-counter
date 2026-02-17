@@ -5,5 +5,7 @@
 export const API_BASE_URL = "";
 
 export const getApiUrl = (endpoint: string) => {
-    return `${API_BASE_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+    const url = `${API_BASE_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+    console.log(`[API Debug] Resolved URL for ${endpoint}:`, url, "Base:", API_BASE_URL);
+    return url;
 };
